@@ -138,6 +138,51 @@ class Call(object):
         return self.__class__.__name__
 
 
+class ArrayComprehension(object):
+    def __init__(self, term, body):
+        self.term = term
+        self.body = body
+
+    @classmethod
+    def from_data(cls, data):
+        return cls(Term.from_data(data["term"]), Query.from_data(data["body"]))
+
+    def __str__(self):
+        return self.__class__.__name__
+
+
+class SetComprehension(object):
+    def __init__(self, term, body):
+        self.term = term
+        self.body = body
+
+    @classmethod
+    def from_data(cls, data):
+        return cls(Term.from_data(data["term"]), Query.from_data(data["body"]))
+
+    def __str__(self):
+        return self.__class__.__name__
+
+
+class ObjectComprehension(object):
+    def __init__(self, key, value, body):
+        self.key = key
+        self.value = value
+        self.body = body
+
+    @classmethod
+    def from_data(cls, data):
+        return cls(Term.from_data(data["key"]), Term.from_data(data["value"]), Query.from_data(data["body"]))
+
+    def __str__(self):
+        return self.__class__.__name__
+
+
+def is_comprehension(x):
+    """Returns true if this is a comprehension type."""
+    return isinstance(x, (ObjectComprehension, SetComprehension, ArrayComprehension))
+
+
 _VALUE_MAP = {
     "null": Scalar,
     "boolean": Scalar,
@@ -149,4 +194,7 @@ _VALUE_MAP = {
     "set": Set,
     "object": Object,
     "call": Call,
+    "objectcomprehension": ObjectComprehension,
+    "setcomprehension": SetComprehension,
+    "arraycomprehension": ArrayComprehension,
 }
