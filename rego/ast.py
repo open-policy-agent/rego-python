@@ -163,9 +163,17 @@ class Call(object):
     def from_data(cls, data):
         return cls([Term.from_data(x) for x in data])
 
+    @property
+    def operator(self):
+        return self.terms[0]
+
+    @property
+    def operands(self):
+        return self.terms[1:]
+
     def __str__(self):
-        return str(self.terms[0]) + '(' + ', '.join(
-            str(o) for o in self.terms[1:]) + ')'
+        return str(self.operator) + '(' + ', '.join(
+            str(o) for o in self.operands) + ')'
 
 
 class ArrayComprehension(object):
@@ -231,4 +239,6 @@ _VALUE_MAP = {
     "objectcomprehension": ObjectComprehension,
     "setcomprehension": SetComprehension,
     "arraycomprehension": ArrayComprehension,
+
+
 }
