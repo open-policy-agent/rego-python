@@ -171,6 +171,10 @@ class Call(object):
     def operands(self):
         return self.terms[1:]
 
+    def op(self):
+        return ".".join(
+            [str(t.value.value) for t in self.operator.value.terms])
+
     def __str__(self):
         return str(self.operator) + '(' + ', '.join(
             str(o) for o in self.operands) + ')'
