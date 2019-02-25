@@ -10,9 +10,12 @@ class QuerySet(object):
         return cls([Query.from_data(q) for q in data])
 
     def __str__(self):
-        return self.__class__.__name__ + '(' + ', '.join(
-            q.__class__.__name__ + '(' + str(q) + ')'
-            for q in self.queries) + ')'
+        return (
+            self.__class__.__name__
+            + "("
+            + ", ".join(q.__class__.__name__ + "(" + str(q) + ")" for q in self.queries)
+            + ")"
+        )
 
 
 class Query(object):
@@ -24,7 +27,7 @@ class Query(object):
         return cls([Expr.from_data(e) for e in data])
 
     def __str__(self):
-        return '; '.join(str(e) for e in self.exprs)
+        return "; ".join(str(e) for e in self.exprs)
 
 
 class Expr(object):
@@ -34,21 +37,20 @@ class Expr(object):
     @property
     def operator(self):
         if not self.is_call():
-            raise ValueError('not a call expr')
+            raise ValueError("not a call expr")
         return self.terms[0]
 
     @property
     def operands(self):
         if not self.is_call():
-            raise ValueError('not a call expr')
+            raise ValueError("not a call expr")
         return self.terms[1:]
 
     def is_call(self):
         return not isinstance(self.terms, Term)
 
     def op(self):
-        return ".".join(
-            [str(t.value.value) for t in self.operator.value.terms])
+        return ".".join([str(t.value.value) for t in self.operator.value.terms])
 
     @classmethod
     def from_data(cls, data):
@@ -59,8 +61,12 @@ class Expr(object):
 
     def __str__(self):
         if self.is_call():
-            return str(self.operator) + '(' + ', '.join(
-                str(o) for o in self.operands) + ')'
+            return (
+                str(self.operator)
+                + "("
+                + ", ".join(str(o) for o in self.operands)
+                + ")"
+            )
         return str(self.terms)
 
 
@@ -112,8 +118,7 @@ class Ref(object):
         return cls([Term.from_data(x) for x in data])
 
     def __str__(self):
-        return str(self.terms[0]) + ''.join('[' + str(t) + ']'
-                                            for t in self.terms[1:])
+        return str(self.terms[0]) + "".join("[" + str(t) + "]" for t in self.terms[1:])
 
 
 class Array(object):
@@ -125,7 +130,7 @@ class Array(object):
         return cls([Term.from_data(x) for x in data])
 
     def __str__(self):
-        return '[' + ','.join(str(x) for x in self.terms) + ']'
+        return "[" + ",".join(str(x) for x in self.terms) + "]"
 
 
 class Set(object):
@@ -138,8 +143,8 @@ class Set(object):
 
     def __str__(self):
         if len(self.terms) == 0:
-            return 'set()'
-        return '{' + ','.join(str(x) for x in self.terms) + '}'
+            return "set()"
+        return "{" + ",".join(str(x) for x in self.terms) + "}"
 
 
 class Object(object):
@@ -148,11 +153,10 @@ class Object(object):
 
     @classmethod
     def from_data(cls, data):
-        return cls(
-            *[(Term.from_data(p[0]), Term.from_data(p[1])) for p in data])
+        return cls(*[(Term.from_data(p[0]), Term.from_data(p[1])) for p in data])
 
     def __str__(self):
-        return '{' + ','.join({str(x): str(y) for (x, y) in self.pairs}) + '}'
+        return "{" + ",".join({str(x): str(y) for (x, y) in self.pairs}) + "}"
 
 
 class Call(object):
@@ -172,12 +176,10 @@ class Call(object):
         return self.terms[1:]
 
     def op(self):
-        return ".".join(
-            [str(t.value.value) for t in self.operator.value.terms])
+        return ".".join([str(t.value.value) for t in self.operator.value.terms])
 
     def __str__(self):
-        return str(self.operator) + '(' + ', '.join(
-            str(o) for o in self.operands) + ')'
+        return str(self.operator) + "(" + ", ".join(str(o) for o in self.operands) + ")"
 
 
 class ArrayComprehension(object):
@@ -190,7 +192,7 @@ class ArrayComprehension(object):
         return cls(Term.from_data(data["term"]), Query.from_data(data["body"]))
 
     def __str__(self):
-        return '[' + str(self.term) + ' | ' + str(self.body) + ']'
+        return "[" + str(self.term) + " | " + str(self.body) + "]"
 
 
 class SetComprehension(object):
@@ -203,7 +205,7 @@ class SetComprehension(object):
         return cls(Term.from_data(data["term"]), Query.from_data(data["body"]))
 
     def __str__(self):
-        return '{' + str(self.term) + ' | ' + str(self.body) + '}'
+        return "{" + str(self.term) + " | " + str(self.body) + "}"
 
 
 class ObjectComprehension(object):
@@ -215,18 +217,20 @@ class ObjectComprehension(object):
     @classmethod
     def from_data(cls, data):
         return cls(
-            Term.from_data(data["key"]), Term.from_data(data["value"]),
-            Query.from_data(data["body"]))
+            Term.from_data(data["key"]),
+            Term.from_data(data["value"]),
+            Query.from_data(data["body"]),
+        )
 
     def __str__(self):
-        return '{' + str(self.key) + ':' + str(self.value) + ' | ' + str(
-            self.body) + '}'
+        return (
+            "{" + str(self.key) + ":" + str(self.value) + " | " + str(self.body) + "}"
+        )
 
 
 def is_comprehension(x):
     """Returns true if this is a comprehension type."""
-    return isinstance(
-        x, (ObjectComprehension, SetComprehension, ArrayComprehension))
+    return isinstance(x, (ObjectComprehension, SetComprehension, ArrayComprehension))
 
 
 _VALUE_MAP = {
@@ -243,6 +247,4 @@ _VALUE_MAP = {
     "objectcomprehension": ObjectComprehension,
     "setcomprehension": SetComprehension,
     "arraycomprehension": ArrayComprehension,
-
-
 }
