@@ -45,13 +45,13 @@ def pretty_print(node):
 
         def __call__(self, node):
             if isinstance(node, ast.Scalar):
-                name = node.__class__.__name__ + '(' + json.dumps(node.value) + ')'
+                name = node.__class__.__name__ + "(" + json.dumps(node.value) + ")"
             elif isinstance(node, ast.Var):
-                name = node.__class__.__name__ + '(' + node.value + ')'
+                name = node.__class__.__name__ + "(" + node.value + ")"
             else:
                 name = node.__class__.__name__
-            print ' ' * self.indent + name
-            return printer(self.indent+2)
+            print(" " * self.indent + name)
+            return printer(self.indent + 2)
 
     vis = printer(0)
     walk(node, vis)
