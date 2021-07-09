@@ -76,6 +76,8 @@ class Term(object):
 
     @classmethod
     def from_data(cls, data):
+        if data["type"] == "null":
+            data["value"] = None
         return cls(_VALUE_MAP[data["type"]].from_data(data["value"]))
 
     def __str__(self):
